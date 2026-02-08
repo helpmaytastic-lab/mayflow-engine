@@ -1,31 +1,25 @@
 import express from "express";
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// in-memory storage (for now)
-const jobs = [];
-
+app.use(cors());
 app.use(express.json());
 
-// health check
+// In-memory job store
+const jobs = [];
+
+// Health check
 app.get("/", (req, res) => {
   res.json({
     status: "ok",
     engine: "mayflow",
-    message: "MayFlow Engine is alive"
+    message: "MayFlow Engine is alive",
   });
 });
 
-// GET all jobs
-app.get("/api/jobs", (req, res) => {
-  res.json({
-    count: jobs.length,
-    jobs
-  });
-});
-
-// CREATE a job
+// Create job
 app.post("/api/jobs", (req, res) => {
   const { name, input } = req.body;
 
@@ -38,15 +32,37 @@ app.post("/api/jobs", (req, res) => {
     name,
     input: input || "",
     status: "queued",
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   };
 
   jobs.push(job);
-
-  res.status(201).json(job);
+  res.json(job);
 });
 
-// start server
+// List jobs
+app.get("/api/jobs", (req, res) => {
+  res.json({
+    count: jobs.length,
+    jobs,
+  });
+});
+
+// 🔥 SIMPLE JOB PROCESSOR
+setInterval(() => {
+  const nextJob = jobs.find((j) => j.status === "queued");
+  if (!nextJob) return;
+
+  console.log("Processing job:", nextJob.id);
+  nextJob.status = "processing";
+
+  // Simulate heavy work (FFmpeg / AI later)
+  setTimeout(() => {
+    nextJob.status = "completed";
+    nextJob.completedAt = new Date().toISOString();
+    console.log("Completed job:", nextJob.id);
+  }, 8000); // 8 seconds per job
+}, 3000); // check every 3 seconds
+
 app.listen(PORT, () => {
   console.log(`MayFlow Engine running on port ${PORT}`);
 });
