@@ -1,5 +1,5 @@
-import express from "express";
-import cors from "cors";
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -47,21 +47,20 @@ app.get("/api/jobs", (req, res) => {
   });
 });
 
-// 🔥 SIMPLE JOB PROCESSOR
+// 🔁 Simple job processor
 setInterval(() => {
-  const nextJob = jobs.find((j) => j.status === "queued");
-  if (!nextJob) return;
+  const job = jobs.find((j) => j.status === "queued");
+  if (!job) return;
 
-  console.log("Processing job:", nextJob.id);
-  nextJob.status = "processing";
+  console.log("Processing job:", job.id);
+  job.status = "processing";
 
-  // Simulate heavy work (FFmpeg / AI later)
   setTimeout(() => {
-    nextJob.status = "completed";
-    nextJob.completedAt = new Date().toISOString();
-    console.log("Completed job:", nextJob.id);
-  }, 8000); // 8 seconds per job
-}, 3000); // check every 3 seconds
+    job.status = "completed";
+    job.completedAt = new Date().toISOString();
+    console.log("Completed job:", job.id);
+  }, 8000);
+}, 3000);
 
 app.listen(PORT, () => {
   console.log(`MayFlow Engine running on port ${PORT}`);
