@@ -1,13 +1,12 @@
 {
   "name": "mayflow-engine",
   "version": "1.0.0",
-  "description": "Real video rendering engine using FFmpeg",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "cors": "^2.8.5"
+    "express": "^4.19.2"
   }
 }
